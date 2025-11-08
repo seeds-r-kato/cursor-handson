@@ -38,3 +38,5 @@ storage/framework/views/*
 bootstrap/cache/*
 .phpunit.result.cache
 
+
+frontend/node_modules
