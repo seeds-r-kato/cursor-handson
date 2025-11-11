@@ -42,3 +42,4 @@ export default function ImageCard({ image, onClick }: ImageCardProps) {
   )
 }
 
+
