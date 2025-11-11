@@ -12,10 +12,33 @@ const axiosInstance = axios.create({
   withCredentials: true, // CORS with credentials
 })
 
+// リクエストインターセプター（トークン追加）
+axiosInstance.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('auth_token')
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
 // レスポンスインターセプター（エラーハンドリング）
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      // 認証エラーの場合、トークンを削除
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auth_token')
+        window.location.href = '/login'
+      }
+    }
     if (error.response) {
       // サーバーからエラーレスポンスが返ってきた場合
       console.error('API Error:', error.response.status, error.response.data)

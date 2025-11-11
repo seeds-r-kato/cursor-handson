@@ -53,10 +53,28 @@ services:
     depends_on:
       - laravel
 
+  redis:
+    image: redis:7-alpine
+    container_name: seeds_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
   mysql_data:
+    driver: local
+  redis_data:
     driver: local
